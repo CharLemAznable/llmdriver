@@ -3,18 +3,18 @@ module github.com/CharLemAznable/llmdriver/cmd/server
 go 1.20
 
 require (
-	github.com/CharLemAznable/llmdriver/drivers/doubao v0.0.0
-	github.com/CharLemAznable/llmdriver/drivers/hunyuan v0.0.0
-	github.com/CharLemAznable/llmdriver/drivers/moonshot v0.0.0
-	github.com/CharLemAznable/llmdriver/drivers/qwen v0.0.0
-	github.com/CharLemAznable/llmdriver/drivers/zhipu v0.0.0
-	github.com/CharLemAznable/llmdriver/llmhttp v0.0.0
+	github.com/CharLemAznable/llmdriver/drivers/doubao v0.1.0
+	github.com/CharLemAznable/llmdriver/drivers/hunyuan v0.1.0
+	github.com/CharLemAznable/llmdriver/drivers/moonshot v0.1.0
+	github.com/CharLemAznable/llmdriver/drivers/qwen v0.1.0
+	github.com/CharLemAznable/llmdriver/drivers/zhipu v0.1.0
+	github.com/CharLemAznable/llmdriver/llmhttp v0.1.0
 )
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/CharLemAznable/gfx v0.8.2 // indirect
-	github.com/CharLemAznable/llmdriver v0.0.0 // indirect
+	github.com/CharLemAznable/llmdriver v0.1.0 // indirect
 	github.com/clbanning/mxj/v2 v2.7.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect

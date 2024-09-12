@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/CharLemAznable/gfx v0.8.2
-	github.com/CharLemAznable/llmdriver v0.0.0
+	github.com/CharLemAznable/llmdriver v0.1.0
 	github.com/gogf/gf/v2 v2.7.2
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.978
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/hunyuan v1.0.978
