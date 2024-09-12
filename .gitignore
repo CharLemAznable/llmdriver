@@ -23,3 +23,12 @@ go.work.sum
 
 # env file
 .env
+
+.DS_Store
+.idea
+vendor
+go.sum
+coverage.txt
+output
+my-config.yaml
+log

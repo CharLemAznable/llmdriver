@@ -1,0 +1,20 @@
+doubao:
+  apiKey: "your apiKey"
+  endpoints:
+    custom_name:
+      model: "model name"
+      endpoint: "ep-xxxxxxxxx-yyyy"
+
+hunyuan:
+  secretId: "your secretId"
+  secretKey: "your secretKey"
+
+moonshot:
+  apiKey: "your apiKey"
+
+qwen:
+  apiKey: "your apiKey"
+  workSpace: "your workSpace"
+
+zhipu:
+  apiKey: "your apiKey"

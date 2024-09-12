@@ -1,0 +1,18 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name":        "test_function",
+            "description": "test function",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "{{.Key}}": {
+                        "type": "string"
+                    }
+                },
+                "required": ["{{.Key}}"]
+            }
+        }
+    }
+]

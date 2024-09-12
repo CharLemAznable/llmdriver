@@ -1,0 +1,10 @@
+[
+    {
+        "role": "assistant",
+        "content": "hello"
+    },
+    {
+        "role": "user",
+        "content": "Hello, {{.Name}}!"
+    }
+]
