@@ -89,47 +89,54 @@ func buildMessages(ctx context.Context, reqMessages []*ReqMessage) ([]llmdriver.
 		if reqMessage == nil || reqMessage.Role == nil {
 			continue
 		}
-		var content *string
-		if reqMessage.ContentTmpl != nil {
-			parsed, err := parseTmpl(ctx, reqMessage.ContentTmpl)
-			if err != nil {
-				return nil, err
-			}
-			content = llmdriver.String(parsed)
-		} else if reqMessage.Content != nil {
-			content = reqMessage.Content
+		content, err := buildMessageContent(ctx, reqMessage)
+		if err != nil {
+			return nil, err
 		}
-
-		options := make([]llmdriver.MessageOption, 0)
-		toolCalls := make([]llmdriver.ToolCall, 0)
-		for _, reqToolCall := range reqMessage.ToolCalls {
-			if reqToolCall == nil || reqToolCall.Type == nil {
-				continue
-			}
-			tType := llmdriver.StringValue(reqToolCall.Type)
-			if tType == "function" && reqToolCall.Function != nil {
-				toolCallFunction := llmdriver.NewToolCallFunction(
-					reqToolCall.Function.Name,
-					reqToolCall.Function.Arguments,
-				)
-				toolCall := llmdriver.NewToolCall(
-					reqToolCall.Id,
-					reqToolCall.Type,
-					toolCallFunction,
-					reqToolCall.Index,
-				)
-				toolCalls = append(toolCalls, toolCall)
-			}
-		}
-		if len(toolCalls) > 0 {
-			options = append(options, llmdriver.WithToolCalls(toolCalls))
-		}
-		options = append(options, llmdriver.WithToolCallId(reqMessage.ToolCallId))
-		options = append(options, llmdriver.WithName(reqMessage.Name))
-
-		messages = append(messages, llmdriver.NewMessage(reqMessage.Role, content, options...))
+		messages = append(messages, llmdriver.NewMessage(
+			reqMessage.Role, content, buildMessageOptions(reqMessage)...))
 	}
 	return messages, nil
+}
+
+func buildMessageContent(ctx context.Context, reqMessage *ReqMessage) (*string, error) {
+	if reqMessage.ContentTmpl != nil {
+		parsed, err := parseTmpl(ctx, reqMessage.ContentTmpl)
+		if err != nil {
+			return nil, err
+		}
+		return llmdriver.String(parsed), nil
+	}
+	return reqMessage.Content, nil
+}
+
+func buildMessageOptions(reqMessage *ReqMessage) (options []llmdriver.MessageOption) {
+	toolCalls := make([]llmdriver.ToolCall, 0)
+	for _, reqToolCall := range reqMessage.ToolCalls {
+		if reqToolCall == nil || reqToolCall.Type == nil {
+			continue
+		}
+		tType := llmdriver.StringValue(reqToolCall.Type)
+		if tType == "function" && reqToolCall.Function != nil {
+			toolCallFunction := llmdriver.NewToolCallFunction(
+				reqToolCall.Function.Name,
+				reqToolCall.Function.Arguments,
+			)
+			toolCall := llmdriver.NewToolCall(
+				reqToolCall.Id,
+				reqToolCall.Type,
+				toolCallFunction,
+				reqToolCall.Index,
+			)
+			toolCalls = append(toolCalls, toolCall)
+		}
+	}
+	if len(toolCalls) > 0 {
+		options = append(options, llmdriver.WithToolCalls(toolCalls))
+	}
+	options = append(options, llmdriver.WithToolCallId(reqMessage.ToolCallId))
+	options = append(options, llmdriver.WithName(reqMessage.Name))
+	return
 }
 
 func parseTools(ctx context.Context, input *Input) ([]llmdriver.Tool, error) {
