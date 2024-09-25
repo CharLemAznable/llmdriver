@@ -23,40 +23,40 @@ type ToolCallFunction struct {
 ////////////////////////////////////////////////////////////////
 
 type Req struct {
-	Model  string `v:"required"`
-	Stream bool
+	Model  string `json:"model" v:"required"`
+	Stream bool   `json:"stream"`
 	*Input
 }
 
 type Input struct {
-	Messages     []*ReqMessage
-	MessagesTmpl *Tmpl
-	Prompt       *string
-	PromptTmpl   *Tmpl
+	Messages     []*ReqMessage `json:"messages"`
+	MessagesTmpl *Tmpl         `json:"messages_tmpl"`
+	Prompt       *string       `json:"prompt"`
+	PromptTmpl   *Tmpl         `json:"prompt_tmpl"`
 
-	Tools     []*Tool
-	ToolsTmpl *Tmpl
+	Tools     []*Tool `json:"tools"`
+	ToolsTmpl *Tmpl   `json:"tools_tmpl"`
 }
 
 type ReqMessage struct {
 	Message
-	ContentTmpl *Tmpl
+	ContentTmpl *Tmpl `json:"content_tmpl"`
 }
 
 type Tool struct {
-	Type     *string
-	Function *ToolFunction
+	Type     *string       `json:"type"`
+	Function *ToolFunction `json:"function"`
 }
 
 type ToolFunction struct {
-	Name        *string
-	Description *string
-	Parameters  map[string]interface{}
+	Name        *string                `json:"name"`
+	Description *string                `json:"description"`
+	Parameters  map[string]interface{} `json:"parameters"`
 }
 
 type Tmpl struct {
-	Name   string
-	Params map[string]interface{}
+	Name   string                 `json:"name"`
+	Params map[string]interface{} `json:"params"`
 }
 
 ////////////////////////////////////////////////////////////////

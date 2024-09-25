@@ -3,9 +3,9 @@ module github.com/CharLemAznable/llmdriver/drivers/qwen
 go 1.20
 
 require (
-	github.com/CharLemAznable/gfx v0.8.2
+	github.com/CharLemAznable/gfx v0.8.3
 	github.com/CharLemAznable/llmdriver v0.1.0
-	github.com/gogf/gf/v2 v2.7.2
+	github.com/gogf/gf/v2 v2.7.3
 )
 
 require (
