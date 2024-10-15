@@ -2,10 +2,10 @@ package llmhttp
 
 import (
 	"context"
-	"github.com/CharLemAznable/gfx/frame/gx"
 	"github.com/CharLemAznable/llmdriver"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
+	"github.com/samber/lo"
 )
 
 func parseOutput(ctx context.Context, v llmdriver.Output) *Rsp {
@@ -16,8 +16,11 @@ func parseOutput(ctx context.Context, v llmdriver.Output) *Rsp {
 		Code:    v.Code(),
 		Message: v.Message(),
 		Output: &Output{
-			Id:      v.GetId(),
-			Choices: gx.SliceMapping(v.GetChoices(), parseChoice),
+			Id: v.GetId(),
+			Choices: lo.Map(v.GetChoices(),
+				func(item llmdriver.Choice, _ int) *Choice {
+					return parseChoice(item)
+				}),
 			Usage:   parseUsage(v.GetUsage()),
 			TraceId: gctx.CtxId(ctx),
 		},
@@ -32,8 +35,11 @@ func parseOutputEvent(ctx context.Context, v llmdriver.OutputEvent) *RspEvent {
 		EventId: v.EventId(),
 		Event:   v.Event(),
 		Output: &Output{
-			Id:      v.GetId(),
-			Choices: gx.SliceMapping(v.GetChoices(), parseChoice),
+			Id: v.GetId(),
+			Choices: lo.Map(v.GetChoices(),
+				func(item llmdriver.Choice, _ int) *Choice {
+					return parseChoice(item)
+				}),
 			Usage:   parseUsage(v.GetUsage()),
 			TraceId: gctx.CtxId(ctx),
 		},
@@ -57,9 +63,12 @@ func parseMessage(v llmdriver.Message) *RspMessage {
 	}
 	return &RspMessage{
 		Message{
-			Role:      v.GetRole(),
-			Content:   v.GetContent(),
-			ToolCalls: gx.SliceMapping(v.GetToolCalls(), parseToolCall),
+			Role:    v.GetRole(),
+			Content: v.GetContent(),
+			ToolCalls: lo.Map(v.GetToolCalls(),
+				func(item llmdriver.ToolCall, _ int) *ToolCall {
+					return parseToolCall(item)
+				}),
 		},
 	}
 }

@@ -2,11 +2,11 @@ package hunyuan
 
 import (
 	"context"
-	"github.com/CharLemAznable/gfx/frame/gx"
 	"github.com/CharLemAznable/llmdriver"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gmutex"
+	"github.com/samber/lo"
 	tencent "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/regions"
@@ -206,13 +206,13 @@ func (d *driver) buildReq(ctx context.Context, input llmdriver.Input) (*hunyuan.
 			Role:       message.GetRole(),
 			Content:    message.GetContent(),
 			ToolCallId: message.GetToolCallId(),
-			ToolCalls: gx.SliceMapping(message.GetToolCalls(), func(t llmdriver.ToolCall) *hunyuan.ToolCall {
+			ToolCalls: lo.Map(message.GetToolCalls(), func(item llmdriver.ToolCall, _ int) *hunyuan.ToolCall {
 				return &hunyuan.ToolCall{
-					Id:   t.GetId(),
-					Type: t.GetType(),
+					Id:   item.GetId(),
+					Type: item.GetType(),
 					Function: &hunyuan.ToolCallFunction{
-						Name:      t.GetFunction().GetName(),
-						Arguments: t.GetFunction().GetArguments(),
+						Name:      item.GetFunction().GetName(),
+						Arguments: item.GetFunction().GetArguments(),
 					},
 				}
 			}),

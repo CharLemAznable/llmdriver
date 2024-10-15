@@ -8,6 +8,7 @@ import (
 	"github.com/gogf/gf/v2/container/gmap"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/samber/lo"
 )
 
 const (
@@ -110,16 +111,16 @@ func (d *driver) buildReq(input llmdriver.Input, stream bool) (g.Map, error) {
 	return g.Map{
 		"model":    d.model,
 		"messages": input.GetMessages(),
-		"tools": gx.SliceMapping(input.GetTools(), func(t llmdriver.Tool) llmdriver.Tool {
+		"tools": lo.Map(input.GetTools(), func(item llmdriver.Tool, _ int) llmdriver.Tool {
 			// glm模型的参数tools.function.parameters.type为必填参数
-			if _, ok := t.GetFunction().GetParameters()["type"]; !ok {
-				t.GetFunction().GetParameters()["type"] = "object"
+			if _, ok := item.GetFunction().GetParameters()["type"]; !ok {
+				item.GetFunction().GetParameters()["type"] = "object"
 			}
 			// glm模型的参数tools.function.parameters.properties为必填参数
-			if _, ok := t.GetFunction().GetParameters()["properties"]; !ok {
-				t.GetFunction().GetParameters()["properties"] = g.Map{}
+			if _, ok := item.GetFunction().GetParameters()["properties"]; !ok {
+				item.GetFunction().GetParameters()["properties"] = g.Map{}
 			}
-			return t
+			return item
 		}),
 		"stream": stream,
 	}, nil

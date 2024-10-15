@@ -3,9 +3,10 @@ module github.com/CharLemAznable/llmdriver/drivers/zhipu
 go 1.20
 
 require (
-	github.com/CharLemAznable/gfx v0.8.3
+	github.com/CharLemAznable/gfx v0.8.6
 	github.com/CharLemAznable/llmdriver v0.1.1
-	github.com/gogf/gf/v2 v2.7.3
+	github.com/gogf/gf/v2 v2.7.4
+	github.com/samber/lo v1.47.0
 )
 
 require (
@@ -29,7 +30,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.14.0 // indirect
 	golang.org/x/net v0.24.0 // indirect
 	golang.org/x/sys v0.19.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/text v0.16.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 

@@ -1,8 +1,8 @@
 package hunyuan
 
 import (
-	"github.com/CharLemAznable/gfx/frame/gx"
 	"github.com/CharLemAznable/llmdriver"
+	"github.com/samber/lo"
 	hunyuan "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/hunyuan/v20230901"
 )
 
@@ -81,8 +81,10 @@ func (v *hunyuanOutput) GetId() *string {
 	return v.Response.Id
 }
 func (v *hunyuanOutput) GetChoices() []llmdriver.Choice {
-	return gx.SliceMapping(v.Response.Choices,
-		func(t *hunyuan.Choice) llmdriver.Choice { return NewHunyuanChoice(t) })
+	return lo.Map(v.Response.Choices,
+		func(item *hunyuan.Choice, _ int) llmdriver.Choice {
+			return NewHunyuanChoice(item)
+		})
 }
 func (v *hunyuanOutput) GetUsage() llmdriver.Usage {
 	return NewHunyuanUsage(v.Response.Usage)
@@ -100,8 +102,10 @@ func (v *hunyuanOutputEvent) GetId() *string {
 	return v.Id
 }
 func (v *hunyuanOutputEvent) GetChoices() []llmdriver.Choice {
-	return gx.SliceMapping(v.Choices,
-		func(t *hunyuan.Choice) llmdriver.Choice { return NewHunyuanStreamChoice(t) })
+	return lo.Map(v.Choices,
+		func(item *hunyuan.Choice, _ int) llmdriver.Choice {
+			return NewHunyuanStreamChoice(item)
+		})
 }
 func (v *hunyuanOutputEvent) GetUsage() llmdriver.Usage {
 	return NewHunyuanUsage(v.Usage)
@@ -128,8 +132,10 @@ func (v *hunyuanMessage) GetContent() *string {
 	return v.Content
 }
 func (v *hunyuanMessage) GetToolCalls() []llmdriver.ToolCall {
-	return gx.SliceMapping(v.ToolCalls,
-		func(t *hunyuan.ToolCall) llmdriver.ToolCall { return NewHunyuanToolCall(t) })
+	return lo.Map(v.ToolCalls,
+		func(item *hunyuan.ToolCall, _ int) llmdriver.ToolCall {
+			return NewHunyuanToolCall(item)
+		})
 }
 func (v *hunyuanMessage) GetToolCallId() *string {
 	return v.ToolCallId
@@ -159,8 +165,10 @@ func (v *hunyuanStreamMessage) GetContent() *string {
 	return v.Content
 }
 func (v *hunyuanStreamMessage) GetToolCalls() []llmdriver.ToolCall {
-	return gx.SliceMapping(v.ToolCalls,
-		func(t *hunyuan.ToolCall) llmdriver.ToolCall { return NewHunyuanToolCall(t) })
+	return lo.Map(v.ToolCalls,
+		func(item *hunyuan.ToolCall, _ int) llmdriver.ToolCall {
+			return NewHunyuanToolCall(item)
+		})
 }
 func (v *hunyuanStreamMessage) GetToolCallId() *string {
 	return nil

@@ -1,8 +1,8 @@
 package doubao
 
 import (
-	"github.com/CharLemAznable/gfx/frame/gx"
 	"github.com/CharLemAznable/llmdriver"
+	"github.com/samber/lo"
 	"github.com/volcengine/volcengine-go-sdk/service/arkruntime/model"
 )
 
@@ -66,8 +66,10 @@ func (v doubaoOutput) GetId() *string {
 	return llmdriver.String(v.ID)
 }
 func (v doubaoOutput) GetChoices() []llmdriver.Choice {
-	return gx.SliceMapping(v.Choices,
-		func(t *model.ChatCompletionChoice) llmdriver.Choice { return NewDoubaoChoice(t) })
+	return lo.Map(v.Choices,
+		func(item *model.ChatCompletionChoice, _ int) llmdriver.Choice {
+			return NewDoubaoChoice(item)
+		})
 }
 func (v doubaoOutput) GetUsage() llmdriver.Usage {
 	return NewDoubaoUsage(&v.Usage)
@@ -85,8 +87,10 @@ func (v doubaoOutputEvent) GetId() *string {
 	return llmdriver.String(v.ID)
 }
 func (v doubaoOutputEvent) GetChoices() []llmdriver.Choice {
-	return gx.SliceMapping(v.Choices,
-		func(t *model.ChatCompletionStreamChoice) llmdriver.Choice { return NewDoubaoStreamChoice(t) })
+	return lo.Map(v.Choices,
+		func(item *model.ChatCompletionStreamChoice, _ int) llmdriver.Choice {
+			return NewDoubaoStreamChoice(item)
+		})
 }
 func (v doubaoOutputEvent) GetUsage() llmdriver.Usage {
 	return NewDoubaoUsage(v.Usage)
@@ -113,8 +117,10 @@ func (v doubaoMessage) GetContent() *string {
 	return v.Content.StringValue
 }
 func (v doubaoMessage) GetToolCalls() []llmdriver.ToolCall {
-	return gx.SliceMapping(v.ToolCalls,
-		func(t *model.ToolCall) llmdriver.ToolCall { return NewDoubaoToolCall(t) })
+	return lo.Map(v.ToolCalls,
+		func(item *model.ToolCall, _ int) llmdriver.ToolCall {
+			return NewDoubaoToolCall(item)
+		})
 }
 func (v doubaoMessage) GetToolCallId() *string {
 	return llmdriver.String(v.ToolCallID)
@@ -144,8 +150,10 @@ func (v doubaoStreamMessage) GetContent() *string {
 	return llmdriver.StringNotEmpty(v.Content)
 }
 func (v doubaoStreamMessage) GetToolCalls() []llmdriver.ToolCall {
-	return gx.SliceMapping(v.ToolCalls,
-		func(t *model.ToolCall) llmdriver.ToolCall { return NewDoubaoToolCall(t) })
+	return lo.Map(v.ToolCalls,
+		func(item *model.ToolCall, _ int) llmdriver.ToolCall {
+			return NewDoubaoToolCall(item)
+		})
 }
 func (v doubaoStreamMessage) GetToolCallId() *string {
 	return nil

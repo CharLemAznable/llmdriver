@@ -1,9 +1,9 @@
 package llmdriver
 
 import (
-	"github.com/CharLemAznable/gfx/frame/gx"
 	"github.com/CharLemAznable/gfx/net/gclientx"
 	"github.com/gogf/gf/v2/encoding/gjson"
+	"github.com/samber/lo"
 )
 
 func ParseJsonOutput(jsonString string, options ...JsonKeysOption) (Output, error) {
@@ -223,8 +223,10 @@ func (j *jsonKeys) GetId() *string {
 	return VarString(j.Get(j.idKey))
 }
 func (j *jsonKeys) GetChoices() []Choice {
-	return gx.SliceMapping(j.Get(j.choicesKey).Array(),
-		func(v interface{}) Choice { return newJsonChoice(v, j.choicesMessageKey) })
+	return lo.Map(j.Get(j.choicesKey).Array(),
+		func(item interface{}, _ int) Choice {
+			return newJsonChoice(item, j.choicesMessageKey)
+		})
 }
 func (j *jsonKeys) GetUsage() Usage {
 	return newJsonUsage(j.Get(j.usageKey).Val(), j.promptKey, j.completionKey, j.totalKey)
@@ -256,7 +258,10 @@ func (j *jsonMessage) GetContent() *string {
 	return VarString(j.Get("content"))
 }
 func (j *jsonMessage) GetToolCalls() []ToolCall {
-	return gx.SliceMapping(j.Get("tool_calls").Array(), newJsonToolCall)
+	return lo.Map(j.Get("tool_calls").Array(),
+		func(item interface{}, _ int) ToolCall {
+			return newJsonToolCall(item)
+		})
 }
 func (j *jsonMessage) GetToolCallId() *string {
 	return VarString(j.Get("tool_call_id"))

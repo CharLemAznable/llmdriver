@@ -3,14 +3,15 @@ module github.com/CharLemAznable/llmdriver/drivers/doubao
 go 1.20
 
 require (
-	github.com/CharLemAznable/gfx v0.8.3
 	github.com/CharLemAznable/llmdriver v0.1.1
-	github.com/gogf/gf/v2 v2.7.3
-	github.com/volcengine/volcengine-go-sdk v1.0.158
+	github.com/gogf/gf/v2 v2.7.4
+	github.com/samber/lo v1.47.0
+	github.com/volcengine/volcengine-go-sdk v1.0.160
 )
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
+	github.com/CharLemAznable/gfx v0.8.6 // indirect
 	github.com/clbanning/mxj/v2 v2.7.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect
@@ -33,7 +34,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.14.0 // indirect
 	golang.org/x/net v0.24.0 // indirect
 	golang.org/x/sys v0.19.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/text v0.16.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 

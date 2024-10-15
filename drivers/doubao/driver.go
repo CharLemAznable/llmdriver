@@ -2,11 +2,11 @@ package doubao
 
 import (
 	"context"
-	"github.com/CharLemAznable/gfx/frame/gx"
 	"github.com/CharLemAznable/llmdriver"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gmutex"
+	"github.com/samber/lo"
 	"github.com/volcengine/volcengine-go-sdk/service/arkruntime"
 	"github.com/volcengine/volcengine-go-sdk/service/arkruntime/model"
 	"io"
@@ -175,13 +175,13 @@ func (d *driver) buildReq(input llmdriver.Input) model.ChatCompletionRequest {
 			Content: &model.ChatCompletionMessageContent{
 				StringValue: message.GetContent(),
 			},
-			ToolCalls: gx.SliceMapping(message.GetToolCalls(), func(t llmdriver.ToolCall) *model.ToolCall {
+			ToolCalls: lo.Map(message.GetToolCalls(), func(item llmdriver.ToolCall, _ int) *model.ToolCall {
 				return &model.ToolCall{
-					ID:   llmdriver.StringValue(t.GetId()),
-					Type: model.ToolType(llmdriver.StringValue(t.GetType())),
+					ID:   llmdriver.StringValue(item.GetId()),
+					Type: model.ToolType(llmdriver.StringValue(item.GetType())),
 					Function: model.FunctionCall{
-						Name:      llmdriver.StringValue(t.GetFunction().GetName()),
-						Arguments: llmdriver.StringValue(t.GetFunction().GetArguments()),
+						Name:      llmdriver.StringValue(item.GetFunction().GetName()),
+						Arguments: llmdriver.StringValue(item.GetFunction().GetArguments()),
 					},
 				}
 			}),
