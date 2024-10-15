@@ -3,7 +3,7 @@ module github.com/CharLemAznable/llmdriver/drivers/hunyuan
 go 1.20
 
 require (
-	github.com/CharLemAznable/llmdriver v0.1.1
+	github.com/CharLemAznable/llmdriver v0.1.2
 	github.com/gogf/gf/v2 v2.7.4
 	github.com/samber/lo v1.47.0
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1021
