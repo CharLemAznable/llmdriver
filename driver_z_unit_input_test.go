@@ -5,6 +5,7 @@ import (
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/test/gtest"
+	"github.com/samber/lo"
 	"testing"
 )
 
@@ -15,9 +16,9 @@ func Test_Input_Messages(t *testing.T) {
 		t.Assert(len(input.GetMessages()), 0)
 		t.AssertNil(input.GetTools())
 
-		message := llmdriver.NewMessage(llmdriver.String("role"), llmdriver.String("content"))
-		t.Assert(llmdriver.StringValue(message.GetRole()), "role")
-		t.Assert(llmdriver.StringValue(message.GetContent()), "content")
+		message := llmdriver.NewMessage(lo.ToPtr("role"), lo.ToPtr("content"))
+		t.Assert(lo.FromPtr(message.GetRole()), "role")
+		t.Assert(lo.FromPtr(message.GetContent()), "content")
 		t.AssertNil(message.GetToolCallId())
 		t.AssertNil(message.GetName())
 
@@ -39,13 +40,13 @@ func Test_Input_Messages(t *testing.T) {
 		messages, err := llmdriver.JsonToMessages(json)
 		t.AssertNil(err)
 		message = messages[0]
-		t.Assert(llmdriver.StringValue(message.GetRole()), "role")
-		t.Assert(llmdriver.StringValue(message.GetContent()), "content")
+		t.Assert(lo.FromPtr(message.GetRole()), "role")
+		t.Assert(lo.FromPtr(message.GetContent()), "content")
 		toolCall := message.GetToolCalls()[0]
 		t.AssertNil(toolCall.GetId())
-		t.Assert(llmdriver.StringValue(toolCall.GetType()), "function")
+		t.Assert(lo.FromPtr(toolCall.GetType()), "function")
 		toolCallFunction := toolCall.GetFunction()
-		t.Assert(llmdriver.StringValue(toolCallFunction.GetName()), "name")
+		t.Assert(lo.FromPtr(toolCallFunction.GetName()), "name")
 		t.AssertNil(toolCallFunction.GetArguments())
 		t.AssertNil(toolCall.GetIndex())
 		t.AssertNil(message.GetToolCallId())
@@ -55,13 +56,13 @@ func Test_Input_Messages(t *testing.T) {
 
 func Test_Tools(t *testing.T) {
 	gtest.C(t, func(t *gtest.T) {
-		tool := llmdriver.NewTool(llmdriver.String("function"),
-			llmdriver.NewToolFunction(llmdriver.String("name"),
-				llmdriver.String("description"),
+		tool := llmdriver.NewTool(lo.ToPtr("function"),
+			llmdriver.NewToolFunction(lo.ToPtr("name"),
+				lo.ToPtr("description"),
 				g.Map{"type": "string"}))
-		t.Assert(llmdriver.StringValue(tool.GetType()), "function")
-		t.Assert(llmdriver.StringValue(tool.GetFunction().GetName()), "name")
-		t.Assert(llmdriver.StringValue(tool.GetFunction().GetDescription()), "description")
+		t.Assert(lo.FromPtr(tool.GetType()), "function")
+		t.Assert(lo.FromPtr(tool.GetFunction().GetName()), "name")
+		t.Assert(lo.FromPtr(tool.GetFunction().GetDescription()), "description")
 		t.Assert(tool.GetFunction().GetParameters(), g.Map{"type": "string"})
 
 		json := gjson.New(g.Slice{
@@ -77,9 +78,9 @@ func Test_Tools(t *testing.T) {
 		tools, err := llmdriver.JsonToTools(json)
 		t.AssertNil(err)
 		tool = tools[0]
-		t.Assert(llmdriver.StringValue(tool.GetType()), "function")
-		t.Assert(llmdriver.StringValue(tool.GetFunction().GetName()), "name2")
-		t.Assert(llmdriver.StringValue(tool.GetFunction().GetDescription()), "description2")
+		t.Assert(lo.FromPtr(tool.GetType()), "function")
+		t.Assert(lo.FromPtr(tool.GetFunction().GetName()), "name2")
+		t.Assert(lo.FromPtr(tool.GetFunction().GetDescription()), "description2")
 		t.Assert(tool.GetFunction().GetParameters(), g.Map{"type": "object"})
 	})
 }

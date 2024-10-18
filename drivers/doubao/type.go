@@ -63,7 +63,7 @@ func (v doubaoOutput) Message() *string {
 	return nil
 }
 func (v doubaoOutput) GetId() *string {
-	return llmdriver.String(v.ID)
+	return lo.ToPtr(v.ID)
 }
 func (v doubaoOutput) GetChoices() []llmdriver.Choice {
 	return lo.Map(v.Choices,
@@ -84,7 +84,7 @@ func (v doubaoOutputEvent) Event() *string {
 	return nil
 }
 func (v doubaoOutputEvent) GetId() *string {
-	return llmdriver.String(v.ID)
+	return lo.ToPtr(v.ID)
 }
 func (v doubaoOutputEvent) GetChoices() []llmdriver.Choice {
 	return lo.Map(v.Choices,
@@ -99,10 +99,10 @@ func (v doubaoOutputEvent) GetUsage() llmdriver.Usage {
 type doubaoChoice model.ChatCompletionChoice
 
 func (v *doubaoChoice) GetIndex() *int {
-	return llmdriver.Int(v.Index)
+	return lo.ToPtr(v.Index)
 }
 func (v *doubaoChoice) GetFinishReason() *string {
-	return llmdriver.StringNotEmpty(string(v.FinishReason))
+	return lo.EmptyableToPtr(string(v.FinishReason))
 }
 func (v *doubaoChoice) GetMessage() llmdriver.Message {
 	return NewDoubaoMessage(v.Message)
@@ -111,7 +111,7 @@ func (v *doubaoChoice) GetMessage() llmdriver.Message {
 type doubaoMessage model.ChatCompletionMessage
 
 func (v doubaoMessage) GetRole() *string {
-	return llmdriver.String(v.Role)
+	return lo.ToPtr(v.Role)
 }
 func (v doubaoMessage) GetContent() *string {
 	return v.Content.StringValue
@@ -123,7 +123,7 @@ func (v doubaoMessage) GetToolCalls() []llmdriver.ToolCall {
 		})
 }
 func (v doubaoMessage) GetToolCallId() *string {
-	return llmdriver.String(v.ToolCallID)
+	return lo.ToPtr(v.ToolCallID)
 }
 func (v doubaoMessage) GetName() *string {
 	return nil
@@ -132,10 +132,10 @@ func (v doubaoMessage) GetName() *string {
 type doubaoStreamChoice model.ChatCompletionStreamChoice
 
 func (v *doubaoStreamChoice) GetIndex() *int {
-	return llmdriver.Int(v.Index)
+	return lo.ToPtr(v.Index)
 }
 func (v *doubaoStreamChoice) GetFinishReason() *string {
-	return llmdriver.StringNotEmpty(string(v.FinishReason))
+	return lo.EmptyableToPtr(string(v.FinishReason))
 }
 func (v *doubaoStreamChoice) GetMessage() llmdriver.Message {
 	return NewDoubaoStreamMessage(v.Delta)
@@ -144,10 +144,10 @@ func (v *doubaoStreamChoice) GetMessage() llmdriver.Message {
 type doubaoStreamMessage model.ChatCompletionStreamChoiceDelta
 
 func (v doubaoStreamMessage) GetRole() *string {
-	return llmdriver.String(v.Role)
+	return lo.ToPtr(v.Role)
 }
 func (v doubaoStreamMessage) GetContent() *string {
-	return llmdriver.StringNotEmpty(v.Content)
+	return lo.EmptyableToPtr(v.Content)
 }
 func (v doubaoStreamMessage) GetToolCalls() []llmdriver.ToolCall {
 	return lo.Map(v.ToolCalls,
@@ -165,10 +165,10 @@ func (v doubaoStreamMessage) GetName() *string {
 type doubaoToolCall model.ToolCall
 
 func (v *doubaoToolCall) GetId() *string {
-	return llmdriver.String(v.ID)
+	return lo.ToPtr(v.ID)
 }
 func (v *doubaoToolCall) GetType() *string {
-	return llmdriver.String(string(v.Type))
+	return lo.ToPtr(string(v.Type))
 }
 func (v *doubaoToolCall) GetFunction() llmdriver.ToolCallFunction {
 	return NewDoubaoToolCallFunction(v.Function)
@@ -180,20 +180,20 @@ func (v *doubaoToolCall) GetIndex() *int {
 type doubaoToolCallFunction model.FunctionCall
 
 func (v doubaoToolCallFunction) GetName() *string {
-	return llmdriver.String(v.Name)
+	return lo.ToPtr(v.Name)
 }
 func (v doubaoToolCallFunction) GetArguments() *string {
-	return llmdriver.String(v.Arguments)
+	return lo.ToPtr(v.Arguments)
 }
 
 type doubaoUsage model.Usage
 
 func (v *doubaoUsage) GetPromptTokens() *int64 {
-	return llmdriver.Int64(int64(v.PromptTokens))
+	return lo.ToPtr(int64(v.PromptTokens))
 }
 func (v *doubaoUsage) GetCompletionTokens() *int64 {
-	return llmdriver.Int64(int64(v.CompletionTokens))
+	return lo.ToPtr(int64(v.CompletionTokens))
 }
 func (v *doubaoUsage) GetTotalTokens() *int64 {
-	return llmdriver.Int64(int64(v.TotalTokens))
+	return lo.ToPtr(int64(v.TotalTokens))
 }

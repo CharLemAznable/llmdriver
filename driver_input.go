@@ -3,6 +3,7 @@ package llmdriver
 import (
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/util/gutil"
+	"github.com/samber/lo"
 )
 
 func NewInput(messages []Message, tools []Tool) Input {
@@ -73,14 +74,14 @@ func NewToolCallFunction(name, arguments *string) ToolCallFunction {
 
 func JsonToMessages(json *gjson.Json) (messages []Message, err error) {
 	messagesArray := json.Array()
+	messages = make([]Message, 0, len(messagesArray))
 	for _, item := range messagesArray {
 		messageJson := gjson.New(item)
 		role := VarString(messageJson.Get("role"))
 		content := VarString(messageJson.Get("content"))
 
-		options := make([]MessageOption, 0)
-		toolCalls := make([]ToolCall, 0)
 		toolCallsArray := messageJson.Get("tool_calls").Array()
+		toolCalls := make([]ToolCall, 0, len(toolCallsArray))
 		for _, toolCallItem := range toolCallsArray {
 			toolCallJson := gjson.New(toolCallItem)
 			tType := toolCallJson.Get("type").String()
@@ -89,10 +90,12 @@ func JsonToMessages(json *gjson.Json) (messages []Message, err error) {
 					VarString(toolCallJson.Get("function.name")),
 					VarString(toolCallJson.Get("function.arguments")))
 				toolCalls = append(toolCalls, NewToolCall(
-					VarString(toolCallJson.Get("id")), String(tType),
+					VarString(toolCallJson.Get("id")), lo.ToPtr(tType),
 					function, VarInt(toolCallJson.Get("index"))))
 			}
 		}
+
+		options := make([]MessageOption, 0, 3)
 		if len(toolCalls) > 0 {
 			options = append(options, WithToolCalls(toolCalls))
 		}
@@ -106,6 +109,7 @@ func JsonToMessages(json *gjson.Json) (messages []Message, err error) {
 
 func JsonToTools(json *gjson.Json) (tools []Tool, err error) {
 	toolsArray := json.Array()
+	tools = make([]Tool, 0, len(toolsArray))
 	for _, item := range toolsArray {
 		toolJson := gjson.New(item)
 		tType := toolJson.Get("type").String()
@@ -114,7 +118,7 @@ func JsonToTools(json *gjson.Json) (tools []Tool, err error) {
 				VarString(toolJson.Get("function.name")),
 				VarString(toolJson.Get("function.description")),
 				toolJson.Get("function.parameters").Map())
-			tools = append(tools, NewTool(String(tType), function))
+			tools = append(tools, NewTool(lo.ToPtr(tType), function))
 		}
 	}
 	return

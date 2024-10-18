@@ -12,6 +12,7 @@ import (
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/test/gtest"
+	"github.com/samber/lo"
 	"testing"
 )
 
@@ -41,9 +42,9 @@ func (d *echoDriver) Call(_ context.Context, input llmdriver.Input) (llmdriver.O
 			},
 		}
 	}
-	var choices g.List
+	choices := make(g.List, 0, len(input.GetMessages()))
 	for _, message := range input.GetMessages() {
-		if llmdriver.StringValue(message.GetContent()) == "error" {
+		if lo.FromPtr(message.GetContent()) == "error" {
 			return nil, errors.New("error once")
 		}
 		choiceMessage := g.Map{
@@ -83,7 +84,7 @@ func (d *echoDriver) CallStream(_ context.Context, input llmdriver.Input) llmdri
 			}
 		}
 		for _, message := range input.GetMessages() {
-			if llmdriver.StringValue(message.GetContent()) == "error" {
+			if lo.FromPtr(message.GetContent()) == "error" {
 				outputStream.Close(errors.New("error stream"))
 				return
 			}
@@ -129,6 +130,10 @@ func Test_Req_Error(t *testing.T) {
 		t.Assert(err.Error(), "400 llmdriver: unknown driver \"nil\" (forgotten import?)")
 
 		resp, err = client.PostContent(ctx, url, g.Map{"model": "echo"})
+		t.Assert(resp, "")
+		t.Assert(err.Error(), "400 invalid request")
+
+		resp, err = client.PostContent(ctx, url, g.Map{"model": "echo", "messages": g.Array{}})
 		t.Assert(resp, "")
 		t.Assert(err.Error(), "400 invalid request")
 

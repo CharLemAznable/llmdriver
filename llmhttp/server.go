@@ -7,6 +7,7 @@ import (
 	"github.com/CharLemAznable/llmdriver"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/samber/lo"
 	"net/http"
 )
 
@@ -50,9 +51,7 @@ func callStream(driver llmdriver.Driver, input llmdriver.Input, client *gsse.Cli
 	for outputEvent := range stream.Event() {
 		rspEvent := parseOutputEvent(client.Context(), outputEvent)
 		data := gjson.MustEncodeString(rspEvent.Output)
-		client.SendEventWithId(
-			llmdriver.StringValue(rspEvent.EventId),
-			llmdriver.StringValue(rspEvent.Event), data)
+		client.SendEventWithId(lo.FromPtr(rspEvent.EventId), lo.FromPtr(rspEvent.Event), data)
 	}
 	if err := stream.Err(); err != nil {
 		client.Response().WriteStatusExit(http.StatusBadRequest, err.Error())

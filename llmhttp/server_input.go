@@ -7,6 +7,7 @@ import (
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/samber/lo"
 )
 
 var (
@@ -25,7 +26,7 @@ func buildInput(ctx context.Context, input *Input) (llmdriver.Input, error) {
 	if err != nil {
 		return nil, err
 	}
-	if messages != nil {
+	if messages != nil && len(messages) > 0 {
 		return llmdriver.NewInput(messages, tools), nil
 	}
 	return nil, invalidRequest
@@ -36,7 +37,7 @@ const (
 )
 
 var (
-	pMessageRoleUser = llmdriver.String(messageRoleUser)
+	pMessageRoleUser = lo.ToPtr(messageRoleUser)
 )
 
 func parseMessages(ctx context.Context, input *Input) ([]llmdriver.Message, error) {
@@ -60,7 +61,7 @@ func parseMessages(ctx context.Context, input *Input) ([]llmdriver.Message, erro
 			return nil, err
 		}
 		return []llmdriver.Message{
-			llmdriver.NewMessage(pMessageRoleUser, llmdriver.String(content)),
+			llmdriver.NewMessage(pMessageRoleUser, lo.ToPtr(content)),
 		}, nil
 
 	} else if input.Prompt != nil { // 直传提示词
@@ -84,7 +85,7 @@ func buildMessagesWithTmpl(ctx context.Context, tmpl *Tmpl) ([]llmdriver.Message
 }
 
 func buildMessages(ctx context.Context, reqMessages []*ReqMessage) ([]llmdriver.Message, error) {
-	var messages []llmdriver.Message
+	messages := make([]llmdriver.Message, 0, len(reqMessages))
 	for _, reqMessage := range reqMessages {
 		if reqMessage == nil || reqMessage.Role == nil {
 			continue
@@ -105,18 +106,18 @@ func buildMessageContent(ctx context.Context, reqMessage *ReqMessage) (*string, 
 		if err != nil {
 			return nil, err
 		}
-		return llmdriver.String(parsed), nil
+		return lo.ToPtr(parsed), nil
 	}
 	return reqMessage.Content, nil
 }
 
 func buildMessageOptions(reqMessage *ReqMessage) (options []llmdriver.MessageOption) {
-	toolCalls := make([]llmdriver.ToolCall, 0)
+	toolCalls := make([]llmdriver.ToolCall, 0, len(reqMessage.ToolCalls))
 	for _, reqToolCall := range reqMessage.ToolCalls {
 		if reqToolCall == nil || reqToolCall.Type == nil {
 			continue
 		}
-		tType := llmdriver.StringValue(reqToolCall.Type)
+		tType := lo.FromPtr(reqToolCall.Type)
 		if tType == "function" && reqToolCall.Function != nil {
 			toolCallFunction := llmdriver.NewToolCallFunction(
 				reqToolCall.Function.Name,
@@ -131,6 +132,7 @@ func buildMessageOptions(reqMessage *ReqMessage) (options []llmdriver.MessageOpt
 			toolCalls = append(toolCalls, toolCall)
 		}
 	}
+	options = make([]llmdriver.MessageOption, 0, 3)
 	if len(toolCalls) > 0 {
 		options = append(options, llmdriver.WithToolCalls(toolCalls))
 	}
@@ -165,11 +167,12 @@ func buildToolsWithTmpl(ctx context.Context, tmpl *Tmpl) ([]llmdriver.Tool, erro
 }
 
 func buildTools(inputTools []*Tool) (tools []llmdriver.Tool) {
+	tools = make([]llmdriver.Tool, 0, len(inputTools))
 	for _, inputTool := range inputTools {
 		if inputTool == nil || inputTool.Type == nil {
 			continue
 		}
-		tType := llmdriver.StringValue(inputTool.Type)
+		tType := lo.FromPtr(inputTool.Type)
 		if tType == "function" && inputTool.Function != nil {
 			tools = append(tools, llmdriver.NewTool(
 				inputTool.Type,

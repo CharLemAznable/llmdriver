@@ -7,6 +7,7 @@ import (
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/test/gtest"
+	"github.com/samber/lo"
 	"testing"
 )
 
@@ -49,29 +50,29 @@ func Test_Output_Json(t *testing.T) {
 			llmdriver.WithCompletionKey("completion"),
 			llmdriver.WithTotalKey("total"))
 		t.AssertNil(err)
-		t.Assert(llmdriver.StringValue(output.Code()), "0")
-		t.Assert(llmdriver.StringValue(output.Message()), "ok")
-		t.Assert(llmdriver.StringValue(output.GetId()), "1")
+		t.Assert(lo.FromPtr(output.Code()), "0")
+		t.Assert(lo.FromPtr(output.Message()), "ok")
+		t.Assert(lo.FromPtr(output.GetId()), "1")
 		choice := output.GetChoices()[0]
 		t.AssertNil(choice.GetIndex())
-		t.Assert(llmdriver.IntValue(choice.GetIndex()), 0)
+		t.Assert(lo.FromPtr(choice.GetIndex()), 0)
 		t.AssertNil(choice.GetFinishReason())
-		t.Assert(llmdriver.StringValue(choice.GetFinishReason()), "")
-		t.Assert(llmdriver.StringValue(choice.GetMessage().GetRole()), "assistant")
-		t.Assert(llmdriver.StringValue(choice.GetMessage().GetContent()), "Hello!")
+		t.Assert(lo.FromPtr(choice.GetFinishReason()), "")
+		t.Assert(lo.FromPtr(choice.GetMessage().GetRole()), "assistant")
+		t.Assert(lo.FromPtr(choice.GetMessage().GetContent()), "Hello!")
 		toolCall := choice.GetMessage().GetToolCalls()[0]
 		t.AssertNil(toolCall.GetId())
 		t.AssertNil(toolCall.GetType())
 		t.AssertNil(choice.GetMessage().GetToolCallId())
 		t.AssertNil(choice.GetMessage().GetName())
-		t.Assert(llmdriver.IntValue(toolCall.GetIndex()), 1)
-		t.Assert(llmdriver.StringValue(toolCall.GetFunction().GetName()), "get_current_weather")
-		t.Assert(llmdriver.StringValue(toolCall.GetFunction().GetArguments()), `{"location": "Boston, MA", "unit": "fahrenheit"}`)
+		t.Assert(lo.FromPtr(toolCall.GetIndex()), 1)
+		t.Assert(lo.FromPtr(toolCall.GetFunction().GetName()), "get_current_weather")
+		t.Assert(lo.FromPtr(toolCall.GetFunction().GetArguments()), `{"location": "Boston, MA", "unit": "fahrenheit"}`)
 		usage := output.GetUsage()
-		t.Assert(llmdriver.Int64Value(usage.GetPromptTokens()), 1)
-		t.Assert(llmdriver.Int64Value(usage.GetCompletionTokens()), 2)
+		t.Assert(lo.FromPtr(usage.GetPromptTokens()), 1)
+		t.Assert(lo.FromPtr(usage.GetCompletionTokens()), 2)
 		t.AssertNil(usage.GetTotalTokens())
-		t.Assert(llmdriver.Int64Value(usage.GetTotalTokens()), 0)
+		t.Assert(lo.FromPtr(usage.GetTotalTokens()), 0)
 
 		output = llmdriver.NewJsonOutput(nil)
 		t.AssertNil(output)
@@ -103,9 +104,9 @@ func Test_Output_Json(t *testing.T) {
 			llmdriver.WithChoicesKey("choices"),
 			llmdriver.WithChoicesMessageKey("delta"))
 		t.AssertNil(err)
-		t.Assert(llmdriver.StringValue(outputEvent.EventId()), "0")
+		t.Assert(lo.FromPtr(outputEvent.EventId()), "0")
 		t.AssertNil(outputEvent.Event())
-		t.Assert(llmdriver.StringValue(outputEvent.GetId()), "2")
+		t.Assert(lo.FromPtr(outputEvent.GetId()), "2")
 		t.Assert(len(outputEvent.GetChoices()), 3)
 		t.AssertNil(outputEvent.GetChoices()[0])
 		choice = outputEvent.GetChoices()[1]
@@ -137,7 +138,7 @@ func Test_Output_Stream(t *testing.T) {
 		}()
 
 		event := <-stream.Event()
-		t.Assert(llmdriver.StringValue(event.GetId()), "0")
+		t.Assert(lo.FromPtr(event.GetId()), "0")
 		t.AssertNil(stream.Err())
 
 		stream.Drain()

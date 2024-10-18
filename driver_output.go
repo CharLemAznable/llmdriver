@@ -19,8 +19,9 @@ func ParseJsonOutputEvent(event *gclientx.Event, options ...JsonKeysOption) (Out
 	if err != nil {
 		return nil, err
 	}
-	options = append([]JsonKeysOption{WithEventId(event.Id), WithEvent(event.Event)}, options...)
-	return NewJsonOutputEvent(json, options...), nil
+	eventOptions := make([]JsonKeysOption, 0, 2+len(options))
+	eventOptions = append(eventOptions, WithEventId(event.Id), WithEvent(event.Event))
+	return NewJsonOutputEvent(json, append(eventOptions, options...)...), nil
 }
 
 func NewJsonOutput(json *gjson.Json, options ...JsonKeysOption) Output {
@@ -72,7 +73,7 @@ func WithMessageKey(messageKey string) JsonKeysOption {
 func WithEventId(id string) JsonKeysOption {
 	return func(j jsonKeysOptional) {
 		if output, ok := j.(*jsonOutputEvent); ok {
-			output.id = StringNotEmpty(id)
+			output.id = lo.EmptyableToPtr(id)
 		}
 	}
 }
@@ -80,7 +81,7 @@ func WithEventId(id string) JsonKeysOption {
 func WithEvent(event string) JsonKeysOption {
 	return func(j jsonKeysOptional) {
 		if output, ok := j.(*jsonOutputEvent); ok {
-			output.event = StringNotEmpty(event)
+			output.event = lo.EmptyableToPtr(event)
 		}
 	}
 }

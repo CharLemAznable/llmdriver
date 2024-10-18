@@ -200,7 +200,9 @@ func (d *driver) CallStream(ctx context.Context, input llmdriver.Input) (stream 
 func (d *driver) buildReq(ctx context.Context, input llmdriver.Input) (*hunyuan.ChatCompletionsRequest, error) {
 	request := hunyuan.NewChatCompletionsRequest()
 	request.SetContext(ctx)
-	request.Model = llmdriver.String(d.model)
+	request.Model = lo.ToPtr(d.model)
+	request.Messages = make([]*hunyuan.Message, 0, len(input.GetMessages()))
+	request.Tools = make([]*hunyuan.Tool, 0, len(input.GetTools()))
 	for _, message := range input.GetMessages() {
 		request.Messages = append(request.Messages, &hunyuan.Message{
 			Role:       message.GetRole(),
@@ -224,7 +226,7 @@ func (d *driver) buildReq(ctx context.Context, input llmdriver.Input) (*hunyuan.
 			Function: &hunyuan.ToolFunction{
 				Name:        tool.GetFunction().GetName(),
 				Description: tool.GetFunction().GetDescription(),
-				Parameters:  llmdriver.String(gjson.MustEncodeString(tool.GetFunction().GetParameters())),
+				Parameters:  lo.ToPtr(gjson.MustEncodeString(tool.GetFunction().GetParameters())),
 			},
 		})
 	}

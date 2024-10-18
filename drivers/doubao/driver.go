@@ -168,35 +168,44 @@ func (d *driver) CallStream(ctx context.Context, input llmdriver.Input) (stream 
 }
 
 func (d *driver) buildReq(input llmdriver.Input) model.ChatCompletionRequest {
-	request := model.ChatCompletionRequest{Model: d.endpoint}
+	request := model.ChatCompletionRequest{
+		Model:    d.endpoint,
+		Messages: make([]*model.ChatCompletionMessage, 0, len(input.GetMessages())),
+		Tools:    make([]*model.Tool, 0, len(input.GetTools())),
+	}
 	for _, message := range input.GetMessages() {
 		request.Messages = append(request.Messages, &model.ChatCompletionMessage{
-			Role: llmdriver.StringValue(message.GetRole()),
+			Role: lo.FromPtr(message.GetRole()),
 			Content: &model.ChatCompletionMessageContent{
 				StringValue: message.GetContent(),
 			},
 			ToolCalls: lo.Map(message.GetToolCalls(), func(item llmdriver.ToolCall, _ int) *model.ToolCall {
 				return &model.ToolCall{
-					ID:   llmdriver.StringValue(item.GetId()),
-					Type: model.ToolType(llmdriver.StringValue(item.GetType())),
+					ID:   lo.FromPtr(item.GetId()),
+					Type: modelToolType(item.GetType()),
 					Function: model.FunctionCall{
-						Name:      llmdriver.StringValue(item.GetFunction().GetName()),
-						Arguments: llmdriver.StringValue(item.GetFunction().GetArguments()),
+						Name:      lo.FromPtr(item.GetFunction().GetName()),
+						Arguments: lo.FromPtr(item.GetFunction().GetArguments()),
 					},
 				}
 			}),
-			ToolCallID: llmdriver.StringValue(message.GetToolCallId()),
+			ToolCallID: lo.FromPtr(message.GetToolCallId()),
 		})
 	}
 	for _, tool := range input.GetTools() {
 		request.Tools = append(request.Tools, &model.Tool{
-			Type: model.ToolType(llmdriver.StringValue(tool.GetType())),
+			Type: modelToolType(tool.GetType()),
 			Function: &model.FunctionDefinition{
-				Name:        llmdriver.StringValue(tool.GetFunction().GetName()),
-				Description: llmdriver.StringValue(tool.GetFunction().GetDescription()),
+				Name:        lo.FromPtr(tool.GetFunction().GetName()),
+				Description: lo.FromPtr(tool.GetFunction().GetDescription()),
 				Parameters:  tool.GetFunction().GetParameters(),
 			},
 		})
 	}
 	return request
+}
+
+func modelToolType(pType *string) model.ToolType {
+	//goland:noinspection GoRedundantConversion
+	return model.ToolType(string(lo.FromPtr(pType)))
 }
